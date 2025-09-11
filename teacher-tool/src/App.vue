@@ -4,7 +4,7 @@ import TestStuff from './components/TestStuff.vue';
 </script>
 
 <template>
-  <TestStuff></TestStuff>
+  <TestStuff/>
 </template>
 
 <style scoped>

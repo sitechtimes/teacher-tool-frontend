@@ -5,7 +5,7 @@
     <div v-if="students.length">
       <h3>Students: {{ students }}</h3>
       <ul>
-        <li v-for="(student, i) in students" :key="i">
+        <li v-for="(student, i) in students">
           {{ student }}
         </li>
       </ul>
@@ -27,6 +27,7 @@ function handleFile(e) {
     const text = evt.target.result
     const rows = text.split(/\r?\n/)
 
+    console.log(rows)
 
     students.value = rows
       .map(line => line.split(','))            
