@@ -1,6 +1,11 @@
 <script setup>
+<<<<<<< Updated upstream
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
+=======
+
+import TestStuff from './components/TestStuff.vue';
+>>>>>>> Stashed changes
 </script>
 
 <template>
