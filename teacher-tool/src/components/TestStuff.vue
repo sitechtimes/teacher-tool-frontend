@@ -10,6 +10,23 @@
         </li>
       </ul>
     </div>
+    <div v-if="students.length" class="mt-4">
+      <label>
+        Number of groups:
+        <input type="number" v-model.number="numGroups" min="1" />
+      </label>
+      <label class="ml-4">
+        Min per group:
+        <input type="number" v-model.number="minimumGroup" min="1" />
+      </label>
+      <label class="ml-4">
+        Max per group:
+        <input type="number" v-model.number="maximumGroup" min="1" />
+      </label>
+      <button @click="makeGroups" class="ml-4">
+        Randomize Groups
+      </button>
+    </div>
   </div>
 </template>
 
@@ -17,6 +34,10 @@
 import { ref } from 'vue'
 
 const students = ref([])
+const numGroups = ref(2)
+const minimumGroup = ref(1)
+const maximumGroup = ref(5)
+const groups = ref([])
 const headers = ['lastname', 'firstname', 'osis']
 
 function handleFile(e) {
