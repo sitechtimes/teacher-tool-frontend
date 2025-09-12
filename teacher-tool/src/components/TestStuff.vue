@@ -10,6 +10,33 @@
         </li>
       </ul>
     </div>
+    <div v-if="students.length" class="mt-4">
+      <label>
+        Number of groups:
+        <input type="number" v-model.number="numGroups" min="1" />
+      </label>
+      <label class="ml-4">
+        Min per group:
+        <input type="number" v-model.number="minimumGroup" min="1" />
+      </label>
+      <label class="ml-4">
+        Max per group:
+        <input type="number" v-model.number="maximumGroup" min="1" />
+      </label>
+      <button @click="makeGroups" class="ml-4">
+        Randomize Groups
+      </button>
+    </div>
+    <div v-if="groups.length" class="mt-4">
+      <div v-for="(group, i) in groups" class="mb-4 p-2 border rounded">
+        <h4>Group {{ i + 1 }}</h4>
+        <ul>
+          <li v-for="student in group">
+            {{ student }}
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -17,6 +44,10 @@
 import { ref } from 'vue'
 
 const students = ref([])
+const numGroups = ref(2)
+const minimumGroup = ref(1)
+const maximumGroup = ref(5)
+const groups = ref([])
 const headers = ['lastname', 'firstname', 'osis']
 
 function handleFile(e) {
@@ -62,5 +93,16 @@ function handleFile(e) {
   }
 
   reader.readAsText(file)
+}
+
+function makeGroups() {
+  if (!students.value.length) return
+  groups.value = Array.from({ length: numGroups.value }, () => [])
+  const shuffle = [...students.value].sort(() => Math.random() - 0.5)
+  let groupIndex = 0
+  for (const student of shuffle) {
+    groups.value[groupIndex].push(student)
+    groupIndex = (groupIndex + 1) % numGroups.value
+  }
 }
 </script>
