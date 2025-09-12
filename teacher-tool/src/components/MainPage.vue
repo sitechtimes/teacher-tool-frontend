@@ -1,7 +1,16 @@
 <template>
-  <div class="p-4">
-    <input type="file" @change="handleFile" accept=".csv" class="mb-4" />
+  <div class="w-[75vw] h-[60vh] bg-gray-600 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-white overflow-auto">
+    <label>
+      <input type="file" @change="handleFile" accept=".csv" class="border-black rounded-xl border-2 p-2" />
+    </label>
+     <!-- Hidden file input -->
+    <input type="file" id="fileUpload" class="hidden">
 
+    <!-- Styled label acting as button -->
+    <label for="fileUpload"
+      class="cursor-pointer flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
+      📁 Upload File
+    </label>
     <div v-if="students.length">
       <h3>Students: {{ students }}</h3>
       <ul>
