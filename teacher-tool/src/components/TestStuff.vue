@@ -27,6 +27,16 @@
         Randomize Groups
       </button>
     </div>
+    <div v-if="groups.length" class="mt-4">
+      <div v-for="(group, i) in groups" class="mb-4 p-2 border rounded">
+        <h4>Group {{ i + 1 }}</h4>
+        <ul>
+          <li v-for="student in group">
+            {{ student }}
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -83,5 +93,16 @@ function handleFile(e) {
   }
 
   reader.readAsText(file)
+}
+
+function makeGroups() {
+  if (!students.value.length) return
+  groups.value = Array.from({ length: numGroups.value }, () => [])
+  const shuffle = [...students.value].sort(() => Math.random() - 0.5)
+  let groupIndex = 0
+  for (const student of shuffle) {
+    groups.value[groupIndex].push(student)
+    groupIndex = (groupIndex + 1) % numGroups.value
+  }
 }
 </script>
