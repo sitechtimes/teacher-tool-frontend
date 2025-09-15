@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
+
+:root {
+  --primary-color: rgb(255, 255, 255);
+  --secondary-color: rgb(0, 0, 0);
+}

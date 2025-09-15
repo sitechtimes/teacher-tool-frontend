@@ -3,18 +3,7 @@ import MainPage from './components/MainPage.vue';
 </script>
 
 <template>
-  <div class="page">
+  <div class="bg-gray-700 w-[100vw] h-[100vh] flex justify-center items-center">
     <MainPage/>
   </div>
 </template>
-
-<style scoped>
-.page{
-  background-color: rgb(60, 68, 74);
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
