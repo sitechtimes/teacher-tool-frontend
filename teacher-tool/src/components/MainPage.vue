@@ -1,51 +1,101 @@
 <template>
-  <div class="w-[75vw] h-[60vh] bg-gray-600 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-white overflow-auto">
-    <label>
-      <input type="file" @change="handleFile" accept=".csv" class="border-black rounded-xl border-2 p-2" />
-    </label>
-     <!-- Hidden file input -->
-    <input type="file" id="fileUpload" class="hidden">
+  <div class="w-[40vw] h-[80vh] bg-gray-800 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-white flex items-center justify-center m-4">
+    <div class="text-center">
+      <h1 class="text-3xl font-bold mb-4">Welcome to the Teacher Tool</h1>
+      <p class="text-lg">Upload a CSV file of students to get started.</p>
+      <p class="text-sm">To download as a CSV file, go to File, Download, and select Comma Separated Values (.csv)</p>
+      <p class="text-sm mt-2">Make sure the CSV has the following headers: lastname, firstname, osis</p>
+      <img
+        src="/images/example.png"
+        alt="CSV Example"
+        class="mt-4 max-w-full rounded-lg shadow-md"
+      />
+    </div>
+  </div>
 
-    <!-- Styled label acting as button -->
-    <label for="fileUpload"
-      class="cursor-pointer flex items-center justify-center px-4 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
-      📁 Upload File
+  <div class="scrollbar-hide w-[50vw] h-[80vh] bg-gray-600 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-white overflow-auto flex items-center flex-col">
+    <label class="w-1/2 cursor-pointer flex items-center justify-center px-4 py-3 mb-4 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
+      <i class="pi pi-upload mx-2"></i> Upload File
+      <input type="file" @change="handleFile" accept=".csv" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
-    <div v-if="students.length">
-      <h3>Students: {{ students }}</h3>
-      <ul>
-        <li v-for="(student, i) in students">
-          {{ student }}
-        </li>
-      </ul>
-    </div>
-    <div v-if="students.length" class="mt-4">
-      <label>
-        Number of groups:
-        <input type="number" v-model.number="numGroups" min="1" />
-      </label>
-      <label class="ml-4">
-        Min per group:
-        <input type="number" v-model.number="minimumGroup" min="1" />
-      </label>
-      <label class="ml-4">
-        Max per group:
-        <input type="number" v-model.number="maximumGroup" min="1" />
-      </label>
-      <button @click="makeGroups" class="ml-4">
-        Randomize Groups
-      </button>
-    </div>
-    <div v-if="groups.length" class="mt-4">
-      <div v-for="(group, i) in groups" class="mb-4 p-2 border rounded">
-        <h4>Group {{ i + 1 }}</h4>
-        <ul>
-          <li v-for="student in group">
+
+    <div v-if="students.length" class="mt-4 w-5/6">
+      <div class="scrollbar-hide rounded-xl border border-gray-200 bg-white shadow-md p-4 max-h-64 overflow-y-auto ">
+        <h1 class="text-lg font-semibold text-gray-800 mb-2">Students</h1>
+        <ul class="space-y-1 text-gray-700">
+          <li
+            v-for="student in students"
+            class="px-2 py-1"
+          >
             {{ student }}
           </li>
         </ul>
       </div>
     </div>
+
+    <div v-if="students.length" class="mt-10 px-2">
+      <div class="flex flex-wrap items-center gap-4 justify-center">
+        <label class="flex flex-col text-sm font-medium">
+          Number of groups:
+          <input
+            type="number"
+            v-model.number="numGroups"
+            min="1"
+            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+        </label>
+
+        <label class="flex flex-col text-sm font-medium">
+          Min per group:
+          <input
+            type="number"
+            v-model.number="minimumGroup"
+            min="1"
+            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+        </label>
+
+        <label class="flex flex-col text-sm font-medium">
+          Max per group:
+          <input
+            type="number"
+            v-model.number="maximumGroup"
+            min="1"
+            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+        </label>
+      </div>
+
+      <div class="flex justify-center mt-4">
+        <button
+          @click="makeGroups"
+          class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
+        >
+          Randomize Groups
+        </button>
+      </div>
+    </div>
+
+
+    <div v-if="groups.length" class="w-5/6 mt-4 px-2">
+      <div
+        v-for="(group, i) in groups"
+        class="my-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <h4 class="text-lg font-semibold text-gray-800 mb-2">
+          Group {{ i + 1 }}
+        </h4>
+        <ul class="space-y-1 text-gray-700">
+          <li
+            v-for="student in group"
+            class="rounded-md px-2 py-1"
+          >
+            {{ student }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -94,10 +144,7 @@ function handleFile(e) {
           }
         }
         return `${cols[0].trim()}, ${cols[1].trim()} (${cols[2].trim()})` 
-      })
-    
-    
-      
+      }) 
 
   }
 
@@ -115,3 +162,15 @@ function makeGroups() {
   }
 }
 </script>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+</style>
