@@ -44,11 +44,32 @@
             class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </label>
+
+        <label class="flex flex-col text-sm font-medium">
+          Min per group:
+          <input
+            type="number"
+            v-model.number="minimumGroup"
+            min="1"
+            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+        </label>
+
+        <label class="flex flex-col text-sm font-medium">
+          Max per group:
+          <input
+            type="number"
+            v-model.number="maximumGroup"
+            min="1"
+            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          />
+        </label>
       </div>
+
 
       <div class="text-[var(--primary-color)] flex justify-center mt-4">
         <button
-          @click="makeGroups"
+          @click="makeGroups(useMinMax, useNumGroups)"
           class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
         >
           Randomize Groups
@@ -83,6 +104,10 @@ import { ref } from 'vue'
 
 const students = ref([])
 const numGroups = ref(2)
+const minimumGroup = ref(0)
+const maximumGroup = ref(0)
+const useMinMax = ref(false)
+const useNumGroups = ref(true)
 const groups = ref([])
 const headers = ['lastname', 'firstname', 'osis']
 
@@ -115,12 +140,7 @@ function handleFile(e) {
     students.value = dataRows
       .map(line => {
         const cols = line.split(',')
-        for (let i = 0; i < headers.length; i++) {
-          if (!cols[i] || cols[i].trim() == '') {
-            cols[i] = 'Unknown'
-          }
-        }
-        return `${cols[0].trim()}, ${cols[1].trim()} (${cols[2].trim()})` 
+        return `${cols[0].trim()}, ${cols[1].trim()} ${cols[2].trim()}` 
       }) 
 
   }
@@ -128,16 +148,28 @@ function handleFile(e) {
   reader.readAsText(file)
 }
 
-function makeGroups() {
+function makeGroups(useMinMax, useNumGroups) {
   if (!students.value.length) return
-  groups.value = Array.from({ length: numGroups.value }, () => [])
+  let groupAmount = 0
+
+  if (useMinMax) {
+    groupAmount = Math.floor(students.value.length / minimumGroup.value)
+  }
+  if (useNumGroups) {
+    groupAmount = numGroups.value
+  }
+
+  groups.value = Array.from({ length: groupAmount }, () => [])
   const shuffle = [...students.value].sort(() => Math.random() - 0.5)
   let groupIndex = 0
+
   for (const student of shuffle) {
     groups.value[groupIndex].push(student)
-    groupIndex = (groupIndex + 1) % numGroups.value
+    groupIndex = (groupIndex + 1) % groupAmount
   }
 }
+
+
 </script>
 
 <style scoped>
