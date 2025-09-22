@@ -2,12 +2,12 @@
   <div class="w-[40vw] h-[80vh] bg-gray-800 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-[var(--primary-color)] flex items-center justify-center m-4">
     <div class="text-center flex flex-col items-center">
       <h1 class="text-3xl font-bold mb-4">Welcome to the Teacher Tool</h1>
-      <p class="text-lg">Upload a CSV file of students to get started.</p>
-      <p class="text-sm">To download as a CSV file, go to File, Download, and select Comma Separated Values (.csv)</p>
-      <p class="text-sm mt-2">Make sure the CSV has the following headers: lastname, firstname, osis</p>
-      <img
-        src="/images/example.png"
-        alt="CSV Example"
+      <p class="text-lg">Upload a xlsx file of students to get started.</p>
+      <p class="text-sm">To download as a xlsx file, go to File, Download, and select Comma Separated Values (.csv)</p>
+      <p class="text-sm mt-2">Make sure the xlsx has the following headers: lastname, firstname, osis</p>
+      <img 
+        src="/images/example.png" 
+        alt="xlsx Example"
         class="mt-4 max-w-full rounded-lg shadow-md"
       />
     </div>
@@ -16,7 +16,7 @@
   <div class="scrollbar-hide w-[50vw] h-[80vh] bg-gray-600 shadow-lg rounded-xl border-gray-400 border-2 p-4 text-[var(--secondary-color)] overflow-auto flex items-center flex-col">
     <label class="w-1/2 cursor-pointer flex items-center justify-center px-4 py-3 mb-4 bg-indigo-600 text-[var(--primary-color)] rounded-lg shadow hover:bg-indigo-700">
       <i class="pi pi-upload mx-2"></i> Upload File
-      <input type="file" @change="handleFile" accept=".csv" class="hidden border-black rounded-xl border-2 p-2" />
+      <input type="file" @change="handleFile" accept=".xlsx" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
 
     <div v-if="students.length" class="mt-4 w-5/6">
