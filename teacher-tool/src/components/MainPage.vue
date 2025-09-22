@@ -34,27 +34,44 @@
     </div>
 
     <div v-if="students.length" class="mt-10 px-2">
-      <div class="text-[var(--primary-color)] flex flex-wrap items-center gap-4 justify-center">
-        <label class="flex flex-col text-sm font-medium">
-          Number of groups:
-          <input
-            type="number"
-            v-model.number="numGroups"
-            min="1"
-            class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
-          />
-        </label>
-      </div>
-
-      <div class="text-[var(--primary-color)] flex justify-center mt-4">
-        <button
-          @click="makeGroups"
-          class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
+   
+    <div class="text-[var(--primary-color)] flex flex-wrap items-center gap-4 justify-center">
+      <label class="flex flex-col text-sm font-medium">
+        Grouping option:
+        <select
+          v-model="selectedOption"
+          @change="ChangeBooleans(selectedOption)"
+          class="text-[var(--secondary-color)] bg-[var(--primary-color)] mt-1 w-40 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
         >
-          Randomize Groups
-        </button>
-      </div>
+          <option value="numGroups">Number of Groups</option>
+          <option value="min">Min per Group</option>
+          <option value="max">Max per Group</option>
+        </select>
+      </label>
+
+      
+      <label class="flex flex-col text-sm font-medium">
+        Number Value:
+        <input
+          type="number"
+          v-model.number="inputValue"
+          min="1"
+          class="text-[var(--secondary-color)] bg-[var(--primary-color)] mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+        />
+      </label>
+
     </div>
+
+    <div class="text-[var(--primary-color)] flex justify-center mt-4">
+      <button
+        @click="makeGroups(useMin, useMax, useNumGroups)"
+        class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
+      >
+        Randomize Groups
+      </button>
+    </div>
+  </div>
+
 
     <div v-if="groups.length" class="w-5/6 mt-4 px-2">
       <div
@@ -82,7 +99,10 @@
 import { ref } from 'vue'
 
 const students = ref([])
-const numGroups = ref(2)
+const inputValue = ref(1)
+const useMin = ref(false)
+const useMax = ref(true)
+const useNumGroups = ref(false)
 const groups = ref([])
 const headers = ['lastname', 'firstname', 'osis']
 
@@ -115,12 +135,7 @@ function handleFile(e) {
     students.value = dataRows
       .map(line => {
         const cols = line.split(',')
-        for (let i = 0; i < headers.length; i++) {
-          if (!cols[i] || cols[i].trim() == '') {
-            cols[i] = 'Unknown'
-          }
-        }
-        return `${cols[0].trim()}, ${cols[1].trim()} (${cols[2].trim()})` 
+        return `${cols[0].trim()}, ${cols[1].trim()} ${cols[2].trim()}` 
       }) 
 
   }
@@ -128,16 +143,43 @@ function handleFile(e) {
   reader.readAsText(file)
 }
 
-function makeGroups() {
+function makeGroups(useMin, useMax, useNumGroups) {
   if (!students.value.length) return
-  groups.value = Array.from({ length: numGroups.value }, () => [])
+  let groupAmount = 0
+
+  if (useMin) {groupAmount = Math.floor(students.value.length / inputValue.value)}
+  if (useMax) {groupAmount = Math.ceil(students.value.length / inputValue.value)}
+  if (useNumGroups) {groupAmount = inputValue.value}
+
+  groups.value = Array.from(() => [])
   const shuffle = [...students.value].sort(() => Math.random() - 0.5)
   let groupIndex = 0
+
   for (const student of shuffle) {
+    if (!groups.value[groupIndex]) {
+      groups.value[groupIndex] = []
+    }
     groups.value[groupIndex].push(student)
-    groupIndex = (groupIndex + 1) % numGroups.value
+    groupIndex = (groupIndex + 1) % groupAmount
   }
 }
+
+function ChangeBooleans(selectedOption) {
+  if (selectedOption === 'numGroups') {
+    useNumGroups.value = true
+    useMin.value = false
+    useMax.value = false
+  } else if (selectedOption === 'min') {
+    useNumGroups.value = false
+    useMin.value = true
+    useMax.value = false
+  } else if (selectedOption === 'max') {
+    useNumGroups.value = false
+    useMin.value = false
+    useMax.value = true
+  }
+}
+
 </script>
 
 <style scoped>
