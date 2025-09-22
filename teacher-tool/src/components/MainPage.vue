@@ -41,11 +41,11 @@
         <select
           v-model="selectedOption"
           @change="ChangeBooleans(selectedOption)"
-          class="mt-1 w-40 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          class="text-[var(--secondary-color)] bg-[var(--primary-color)] mt-1 w-40 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
         >
-          <option class="text-[var(--secondary-color)]" value="numGroups">Number of Groups</option>
-          <option class="text-[var(--secondary-color)]" value="min">Min per Group</option>
-          <option class="text-[var(--secondary-color)]" value="max">Max per Group</option>
+          <option value="numGroups">Number of Groups</option>
+          <option value="min">Min per Group</option>
+          <option value="max">Max per Group</option>
         </select>
       </label>
 
@@ -56,7 +56,7 @@
           type="number"
           v-model.number="inputValue"
           min="1"
-          class="mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+          class="text-[var(--secondary-color)] bg-[var(--primary-color)] mt-1 w-28 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
         />
       </label>
 
