@@ -19,11 +19,18 @@
     </label>
 
     <div v-if="students.length" class="mt-4 w-5/6">
-      <div class="scrollbar-hide rounded-xl border border-gray-200 bg-white shadow-md p-4 max-h-64 overflow-y-auto ">
-        <h1 class="text-lg font-semibold mb-2">Students</h1>
+      <div
+        v-for="(sheet, index) in Array.isArray(students[0]) || typeof students[0] === 'string'
+                ? [{ name: 'Students', students: students }]
+                : students"
+        :key="index"
+        class="scrollbar-hide rounded-xl border border-gray-200 bg-white shadow-md p-4 max-h-64 overflow-y-auto mb-4"
+      >
+        <h1 class="text-lg font-semibold mb-2">{{ sheet.name }}</h1>
         <ul class="space-y-1">
           <li
-            v-for="student in students"
+            v-for="student in sheet.students"
+            :key="student"
             class="px-2 py-1"
           >
             {{ student }}
@@ -70,20 +77,28 @@
 
     <div v-if="groups.length" class="w-5/6 mt-4 px-2">
       <div
-        v-for="(group, i) in groups"
-        class="my-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        v-for="(sheet, si) in groups"
+        :key="si"
+        class="mb-8"
       >
-        <h4 class="text-lg font-semibold mb-2">
-          Group {{ i + 1 }}
-        </h4>
-        <ul class="space-y-1">
-          <li
-            v-for="student in group"
-            class="rounded-md px-2 py-1"
-          >
-            {{ student }}
-          </li>
-        </ul>
+        <h3 class="text-xl text-[var(--primary-color)] font-bold mb-2">{{ sheet.name }}</h3>
+
+        <div
+          v-for="(group, gi) in sheet.groups"
+          class="my-4 rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
+          <h4 class="text-lg font-semibold mb-2">
+            Group {{ gi + 1 }}
+          </h4>
+          <ul class="space-y-1">
+            <li
+              v-for="student in group"
+              class="rounded-md px-2 py-1"
+            >
+              {{ student }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -132,13 +147,19 @@ function handleFile(e) {
 
       const dataRows = rows.slice(1)
 
-      students.value = dataRows
-        .map(line => {
-          const cols = line.split(',')
-          return `${cols[0].trim()} ${cols[1].trim()} ${cols[2].trim()}` 
-        })
-        .filter(Boolean)
+      students.value = [
+        {
+          name: 'CSV',
+          students: dataRows
+            .map(line => {
+              const cols = line.split(',')
+              return `${cols[0].trim()} ${cols[1].trim()} ${cols[2].trim()}`
+            })
+            .filter(Boolean)
+        }
+      ]
     }
+        
 
     reader.readAsText(file)
 
@@ -151,17 +172,16 @@ function handleFile(e) {
       const skipped = []
 
       for (const sheetName of workbook.SheetNames) {
+        const sheetData = []
         const ws = workbook.Sheets[sheetName]
-        const json = XLSX.utils.sheet_to_json(ws, { defval: '' }) // array of row objects
+        const json = XLSX.utils.sheet_to_json(ws, { defval: '' }) 
         if (!json || json.length === 0) {
           skipped.push(sheetName)
           continue
         }
 
-        // normalize keys from first row
         const keys = Object.keys(json[0]).map(k => k.trim().toLowerCase())
         if (!headers.every(h => keys.includes(h))) {
-          // skip sheets that don't have required headers
           skipped.push(sheetName)
           continue
         }
@@ -176,10 +196,17 @@ function handleFile(e) {
           const firstname = String(getCell(row, 'firstname')).trim()
           const osis = String(getCell(row, 'osis')).trim()
           if (!lastname && !firstname && !osis) continue
-          allStudents.push(`${lastname}, ${firstname} ${osis}`.trim())
+          sheetData.push(`${lastname} ${firstname} ${osis}`.trim())
+        }
+
+        if (sheetData.length) {
+          allStudents.push({
+            name: sheetName,
+            students: sheetData
+          })
         }
       }
-
+      
       if (allStudents.length === 0) {
         error.value = `No valid sheets found. Skipped sheets: ${skipped.join(', ') || 'none'}`
         return
@@ -199,23 +226,36 @@ function handleFile(e) {
 
 function makeGroups() {
   if (!students.value.length) return
-  let groupAmount = 0
 
-  if (useMin.value) {groupAmount = Math.floor(students.value.length / inputValue.value)}
-  if (useMax.value) {groupAmount = Math.ceil(students.value.length / inputValue.value)}
-  if (useNumGroups.value) {groupAmount = inputValue.value}
+  groups.value = [] // clear
 
-  if (groupAmount < 1) groupAmount = 1
-  groups.value = Array.from({ length: groupAmount }, () => [])
+  for (const sheet of students.value) {
+    // sheet.students is the array for this sheet
+    const sheetStudents = sheet.students
 
-  const shuffle = [...students.value].sort(() => Math.random() - 0.5)
-  let groupIndex = 0
+    let groupAmount = 0
+    if (useMin.value) groupAmount = Math.floor(sheetStudents.length / inputValue.value)
+    if (useMax.value) groupAmount = Math.ceil(sheetStudents.length / inputValue.value)
+    if (useNumGroups.value) groupAmount = inputValue.value
+    if (groupAmount < 1) groupAmount = 1
 
-  for (const student of shuffle) {
-    groups.value[groupIndex].push(student)
-    groupIndex = (groupIndex + 1) % groupAmount
+    const sheetGroups = Array.from({ length: groupAmount }, () => [])
+
+    const shuffle = [...sheetStudents].sort(() => Math.random() - 0.5)
+    let groupIndex = 0
+
+    for (const student of shuffle) {
+      sheetGroups[groupIndex].push(student)
+      groupIndex = (groupIndex + 1) % groupAmount
+    }
+
+    groups.value.push({
+      name: sheet.name,
+      groups: sheetGroups
+    })
   }
 }
+
 
 function ChangeBooleans() {
   const val = selectedOption.value
