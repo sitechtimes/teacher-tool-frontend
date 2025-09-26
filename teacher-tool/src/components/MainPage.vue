@@ -17,6 +17,7 @@
       <i class="pi pi-upload mx-2"></i> Upload File
       <input type="file" @change="handleFile" accept=".csv, .xlsx, .xls" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
+    <button @click="Testdata()">SeeData</button>
 
     <div v-if="students.length" class="mt-4 w-5/6">
       <div
@@ -117,6 +118,15 @@ const useNumGroups = ref(true)
 const groups = ref([])
 const error = ref('')
 const headers = ['lastname', 'firstname', 'osis']
+
+function Testdata(){
+  console.log(typeof(groups)) 
+
+  const entriesArray = groups.entries(obj);
+  print(entriesArray)
+  /* xlsx library can redowbload xlsx file for it */
+}
+
 
 function handleFile(e) {
   const file = e.target.files[0]
