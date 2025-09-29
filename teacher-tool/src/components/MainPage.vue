@@ -107,6 +107,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { toRaw } from 'vue';
 import * as XLSX from 'xlsx'
 
 const selectedOption = ref('numGroups')
@@ -119,11 +120,20 @@ const groups = ref([])
 const error = ref('')
 const headers = ['lastname', 'firstname', 'osis']
 
-function Testdata(){
-  console.log(typeof(groups)) 
+function Testdata(){ /* This is for XLSX files download | check it with the vars to enable it later  */
+  console.log(groups)
+  const raw = toRaw(groups.value); 
+  let download_array = []
+  console.log(raw)
+  for(let i=0; i < raw.length; i++){
 
-  const entriesArray = groups.entries(obj);
-  print(entriesArray)
+      console.log(raw[i].name)
+
+  }
+/*   console.log(raw.name) /* This might have to be cleaned up more if the xlsx download doesnt work later */ 
+  const worksheet = XLSX.utils.json_to_sheet(raw);
+
+
   /* xlsx library can redowbload xlsx file for it */
 }
 
