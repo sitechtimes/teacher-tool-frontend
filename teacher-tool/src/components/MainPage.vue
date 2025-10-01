@@ -17,7 +17,7 @@
       <i class="pi pi-upload mx-2"></i> Upload File
       <input type="file" @change="handleFile" accept=".csv, .xlsx, .xls" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
-    <button @click="Testdata()">SeeData</button>
+    <button @click="XLSX_Download()">SeeData</button>
 
     <div v-if="students.length" class="mt-4 w-5/6">
       <div
@@ -120,46 +120,29 @@ const groups = ref([])
 const error = ref('')
 const headers = ['lastname', 'firstname', 'osis']
 
-function Testdata(){ /* This is for XLSX files download | check it with the vars to enable it later  */
+function XLSX_Download(){ /* This is for XLSX files download | check it with the vars to enable it later  */
   const workbook = XLSX.utils.book_new();
- 
-  console.log(groups)
   const raw = toRaw(groups.value); 
   let download_array = []
-  console.log(raw)
   for(let i=0; i < raw.length; i++){
-      console.log(raw[i].groups)
       let y = raw[i].groups
       const sheetData = [];
       sheetData.push(['LastName', 'FirstName', 'OSIS']);
       for(let p = 0; p < y.length; p++){
-        console.log(y[p])
+        let o = p + 1; /* Starts groups at 1 */
+        const currentgroup = "Group " + o
+        sheetData.push([currentgroup])
         const words = y[p]
         for(let k = 0; k < words.length; k++){
-          console.log(words[k])
           let Splitingwords = words[k]
           let splitwords = Splitingwords.split(" ")
-          console.log(splitwords.length)
-          sheetData.push(splitwords) /* This appends the whole thing as "Doe s 445464424" */
-          
-
-
-/* The groups dont display when you have more then one for some reason 
-find where it starts counting each group and before it moves onto next group cluster add in a thing that adds the heading of the group below the aleready dones 
-groups name
-*/
-
-          
+          sheetData.push(splitwords) 
         }
-        
       }
       const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
       XLSX.utils.book_append_sheet(workbook, worksheet, raw[i].name);
-
   }
-/*   console.log(raw.name) /* This might have to be cleaned up more if the xlsx download doesnt work later */ 
   const worksheet = XLSX.utils.json_to_sheet(raw);
-  /* xlsx library can redowbload xlsx file for it */
   XLSX.writeFile(workbook, 'grouped-students.xlsx');
 }
 
