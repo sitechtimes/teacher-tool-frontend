@@ -17,7 +17,10 @@
       <i class="pi pi-upload mx-2"></i> Upload File
       <input type="file" @change="handleFile" accept=".csv, .xlsx, .xls" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
-    <button @click="XLSX_Download()">SeeData</button>
+    <button class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
+     @click="CSV_Download()"> <!-- Once CV function is done make seprate function to check between csv and xlsx and run certain function -->
+     Download
+    </button>
 
     <div v-if="students.length" class="mt-4 w-5/6">
       <div
@@ -120,7 +123,7 @@ const groups = ref([])
 const error = ref('')
 const headers = ['lastname', 'firstname', 'osis']
 
-function XLSX_Download(){ /* This is for XLSX files download | check it with the vars to enable it later  */
+function XLSX_Download(){ /* This is for XLSX files download | Only file format to support multple tabs */
   const workbook = XLSX.utils.book_new();
   const raw = toRaw(groups.value); 
   let download_array = []
@@ -145,6 +148,26 @@ function XLSX_Download(){ /* This is for XLSX files download | check it with the
   const worksheet = XLSX.utils.json_to_sheet(raw);
   XLSX.writeFile(workbook, 'grouped-students.xlsx');
 }
+
+function CSV_Download(){
+  console.log(groups)
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  const csv = XLSX.utils.sheet_to_csv(worksheet);
+
+
+
+
+
+} 
+
+
+
+
+
+
+
+
+
 
 
 function handleFile(e) {
