@@ -18,7 +18,7 @@
       <input type="file" @change="handleFile" accept=".csv, .xlsx, .xls" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
     <button class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
-     @click="CSV_Download()"> <!-- Once CV function is done make seprate function to check between csv and xlsx and run certain function -->
+     @click="SortedFileDownload()"> 
      Download
     </button>
 
@@ -112,7 +112,7 @@
 import { ref } from 'vue'
 import { toRaw } from 'vue';
 import * as XLSX from 'xlsx'
-
+const uploadedFile = ref(null)
 const selectedOption = ref('numGroups')
 const students = ref([])
 const inputValue = ref(1)
@@ -123,10 +123,9 @@ const groups = ref([])
 const error = ref('')
 const headers = ['lastname', 'firstname', 'osis']
 
-function XLSX_Download(){ /* This is for XLSX files download | Only file format to support multple tabs */
+function SortedFileDownload(){ /* This is for XLSX files download | Only file format to support multple tabs */
   const workbook = XLSX.utils.book_new();
   const raw = toRaw(groups.value); 
-  let download_array = []
   for(let i=0; i < raw.length; i++){
       let y = raw[i].groups
       const sheetData = [];
@@ -145,20 +144,23 @@ function XLSX_Download(){ /* This is for XLSX files download | Only file format 
       const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
       XLSX.utils.book_append_sheet(workbook, worksheet, raw[i].name);
   }
+  let file = uploadedFile.value 
+  const isCSV = file.type === 'text/csv' || /\.csv$/i.test(file.name)
+  const isXLSX = /\.(xlsx|xls)$/i.test(file.name)
+  if (isCSV) {
+  const worksheet = XLSX.utils.json_to_sheet(raw);
+  XLSX.writeFile(workbook, 'grouped-students.csv');
+  }
+  if (isXLSX) {
   const worksheet = XLSX.utils.json_to_sheet(raw);
   XLSX.writeFile(workbook, 'grouped-students.xlsx');
+
+  }
+
+  
 }
 
-function CSV_Download(){
-  console.log(groups)
-  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-  const csv = XLSX.utils.sheet_to_csv(worksheet);
 
-
-
-
-
-} 
 
 
 
@@ -173,6 +175,7 @@ function CSV_Download(){
 function handleFile(e) {
   const file = e.target.files[0]
   if (!file) return
+  uploadedFile.value = file
   error.value = ''
   students.value = []
 
