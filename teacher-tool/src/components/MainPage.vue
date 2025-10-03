@@ -18,7 +18,7 @@
       <input type="file" @change="handleFile" accept=".csv, .xlsx, .xls" class="hidden border-black rounded-xl border-2 p-2" />
     </label>
     <button class="rounded-lg bg-blue-600 px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-200"
-     @click="SortedFileDownload()"> 
+     @click="SortedFileDownload"> 
      Download
     </button>
 
@@ -127,17 +127,17 @@ function SortedFileDownload(){ /* This is for XLSX files download | Only file fo
   const workbook = XLSX.utils.book_new();
   const raw = toRaw(groups.value); 
   for(let i=0; i < raw.length; i++){
-      let y = raw[i].groups
+      const RawdataGroups = raw[i].groups
       const sheetData = [];
       sheetData.push(['LastName', 'FirstName', 'OSIS']);
-      for(let p = 0; p < y.length; p++){
-        let o = p + 1; /* Starts groups at 1 */
+      for(let groupsinraw = 0; groupsinraw < RawdataGroups.length; groupsinraw++){
+        const o = groupsinraw + 1; /* Starts groups at 1 */
         const currentgroup = "Group " + o
         sheetData.push([currentgroup])
-        const words = y[p]
-        for(let k = 0; k < words.length; k++){
-          let Splitingwords = words[k]
-          let splitwords = Splitingwords.split(" ")
+        const words = RawdataGroups[groupsinraw]
+        for(let infoingroups = 0; infoingroups < words.length; infoingroups++){
+          const Splitingwords = words[infoingroups]
+          const splitwords = Splitingwords.split(" ")
           sheetData.push(splitwords) 
         }
       }
@@ -156,22 +156,7 @@ function SortedFileDownload(){ /* This is for XLSX files download | Only file fo
   XLSX.writeFile(workbook, 'grouped-students.xlsx');
 
   }
-
-  
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 function handleFile(e) {
   const file = e.target.files[0]
   if (!file) return
